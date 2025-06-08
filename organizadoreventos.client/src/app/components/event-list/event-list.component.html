@@ -1,0 +1,27 @@
+<div>
+    <h2>Lista de Eventos Disponibles</h2>
+  
+    <div *ngIf="!eventos || eventos.length === 0">
+      <p>No hay eventos en este momento.</p>
+    </div>
+
+    <table *ngIf="eventos && eventos.length > 0">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Fecha</th>
+          <th>Lugar</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let evento of eventos">
+          <td>{{ evento.titulo }}</td>
+          <td>{{ evento.fecha | date: 'dd/MM/yyyy h:mm a' }}</td>
+          <td>{{ evento.lugar }}</td>
+          <td>{{ evento.descripcion }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
