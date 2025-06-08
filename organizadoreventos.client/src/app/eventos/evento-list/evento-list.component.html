@@ -1,0 +1,23 @@
+<h2>Lista de Eventos</h2>
+<a routerLink="/eventos/nuevo">Crear Nuevo Evento</a>
+
+<table *ngIf="eventos$ | async as eventos">
+  <thead>
+    <tr>
+      <th>Título</th>
+      <th>Fecha</th>
+      <th>Lugar</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let evento of eventos">
+      <td>{{ evento.titulo }}</td>
+      <td>{{ evento.fecha | date: 'short' }}</td>
+      <td>{{ evento.lugar }}</td>
+      <td>
+        <button (click)="deleteEvento(evento.eventoId)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

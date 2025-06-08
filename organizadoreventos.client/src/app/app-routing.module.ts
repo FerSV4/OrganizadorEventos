@@ -1,10 +1,9 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
+import { EventoListComponent } from './eventos/evento-list/evento-list.component';
+import { EventoFormComponent } from './eventos/evento-form/evento-form.component';
 
-const routes: Routes = [];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
+export const routes: Routes = [
+  { path: '', redirectTo: 'eventos', pathMatch: 'full' },
+  { path: 'eventos', component: EventoListComponent },
+  { path: 'eventos/nuevo', component: EventoFormComponent },
+];
