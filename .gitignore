@@ -1,0 +1,7 @@
+/.vs
+/.obj
+/OrganizadorEventos.Server/bin
+/organizadoreventos.client/obj
+/OrganizadorEventos.Server/obj
+/OrganizadorEventos.Server/Migrations
+/organizadoreventos.client/.vscode
