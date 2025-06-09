@@ -24,15 +24,4 @@ export class EventoListComponent implements OnInit {
     this.eventos$ = this.eventoService.getEventos();
   }
 
-  deleteEvento(id: number): void {
-    if (confirm('¿Estás seguro de que quieres eliminar este evento?')) {
-      this.eventoService.deleteEvento(id).subscribe({
-        next: () => {
-          alert('Evento eliminado');
-          this.loadEventos();
-        },
-        error: (err) => console.error('Error al eliminar evento', err)
-      });
-    }
-  }
 }
