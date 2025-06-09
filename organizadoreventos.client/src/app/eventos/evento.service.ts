@@ -31,6 +31,11 @@ export class EventoService {
   deleteEvento(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  
+
+  inscribirseAEvento(eventoId: number, usuarioId: number): Observable<string> {
+    return this.http.post(`${this.apiUrl}/${eventoId}/inscribir`, usuarioId, { responseType: 'text' });
+  }
 
   getEventosPorUsuario(usuarioId: number): Observable<Evento[]> {
     return this.http.get<Evento[]>(`${this.userApiUrl}/${usuarioId}/inscripciones`);

@@ -1,7 +1,7 @@
-
 namespace OrganizadorEventos.Server.Models;
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 public class Usuario
 {
@@ -23,9 +23,9 @@ public class Usuario
     [Required]
     public string Password { get; set; } 
 
-
+    [JsonIgnore]
     public virtual ICollection<Evento> EventosCreados { get; set; } = new List<Evento>();
 
-
+    [JsonIgnore]
     public virtual ICollection<ParticipanteEvento> Participaciones { get; set; } = new List<ParticipanteEvento>();
 }

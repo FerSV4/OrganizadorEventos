@@ -10,6 +10,7 @@
       <th>Fecha Fin</th>
       <th>Capacidad</th>
       <th>Precio</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -17,10 +18,19 @@
       <td>{{ evento.titulo }}</td>
       <td>{{ evento.fecha | date: 'short' }}</td>
       <td>{{ evento.lugar }}</td>
-      <td>{{ evento.fechaFin }}</td>
+      <td>{{ evento.fechaFin | date: 'short' }}</td>
       <td>{{ evento.capacidad }}</td>
-      <td>{{ evento.precio }}</td>
+      <td>{{ evento.precio | currency }}</td>
       <td>
+        <ng-container *ngIf="usuarioActual">
+          <button 
+            (click)="inscribirse(evento.eventoId)" 
+            [disabled]="esCreador(evento) || estaInscrito(evento.eventoId)">
+            <span *ngIf="esCreador(evento)">Eres el creador</span>
+            <span *ngIf="!esCreador(evento) && estaInscrito(evento.eventoId)">Ya inscrito</span>
+            <span *ngIf="!esCreador(evento) && !estaInscrito(evento.eventoId)">Inscribirse</span>
+          </button>
+        </ng-container>
       </td>
     </tr>
   </tbody>
