@@ -1,23 +1,35 @@
-<h2>Lista de Eventos</h2>
-<a routerLink="/eventos/nuevo">Crear Nuevo Evento</a>
+<div *ngIf="authService.isLoggedIn(); else noAutenticado">
+  <h2>Mis Eventos</h2>
+  <a routerLink="/eventos/nuevo">Crear Nuevo Evento</a>
 
-<table *ngIf="eventos$ | async as eventos">
-  <thead>
-    <tr>
-      <th>Título</th>
-      <th>Fecha</th>
-      <th>Lugar</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let evento of eventos">
-      <td>{{ evento.titulo }}</td>
-      <td>{{ evento.fecha | date: 'short' }}</td>
-      <td>{{ evento.lugar }}</td>
-      <td>
+  <div *ngIf="eventos$ | async as eventos; else cargando" style="margin-top: 1rem;">
+    <div *ngIf="eventos.length === 0">
+      <p>Aún no has creado ningún evento.</p>
+    </div>
+
+    <div *ngFor="let evento of eventos" class="evento-card">
+      <div class="evento-header">
+        <h3>{{ evento.titulo }}</h3>
         <button (click)="deleteEvento(evento.eventoId)">Eliminar</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+      </div>
+      <div class="evento-body">
+        <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
+        <p><strong>Lugar:</strong> {{ evento.lugar || 'No especificado' }}</p>
+        <p><strong>Inicio:</strong> {{ evento.fecha | date:'fullDate' }} a las {{ evento.fecha | date:'shortTime' }}</p>
+
+        <p *ngIf="evento.fechaFin"><strong>Fin:</strong> {{ evento.fechaFin | date:'fullDate' }} a las {{ evento.fechaFin | date:'shortTime' }}</p>
+        <p *ngIf="evento.capacidad"><strong>Capacidad:</strong> {{ evento.capacidad }} personas</p>
+        <p><strong>Costo:</strong> {{ evento.precio ? (evento.precio | currency:'USD') : 'Gratis' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #cargando>
+    <p>Cargando eventos...</p>
+  </ng-template>
+</div>
+
+<ng-template #noAutenticado>
+  <h2>Bienvenido</h2>
+  <p>Por favor, <a routerLink="/login">inicia sesión</a> o <a routerLink="/register">regrístrate</a> para ver y crear tus eventos.</p>
+</ng-template>

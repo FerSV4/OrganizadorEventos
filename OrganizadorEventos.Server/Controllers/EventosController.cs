@@ -104,4 +104,21 @@ public class EventosController : ControllerBase
 
         return NoContent();
     }
+
+
+[HttpGet("por-creador/{creadorId}")]
+public async Task<ActionResult<IEnumerable<Evento>>> GetEventosPorCreador(int creadorId)
+{
+    var eventos = await _context.Eventos
+                                .Where(e => e.CreadorId == creadorId)
+                                .AsNoTracking()
+                                .ToListAsync();
+
+    if (eventos == null || !eventos.Any())
+    {
+        return Ok(new List<Evento>());
+    }
+
+    return Ok(eventos);
+}
 }

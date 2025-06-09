@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Evento } from '../models/evento.model';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,17 @@ import { Evento } from '../models/evento.model';
 export class EventoService {
   private apiUrl = '/api/eventos';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   getEventos(): Observable<Evento[]> {
-    return this.http.get<Evento[]>(this.apiUrl);
+    const usuarioActual = this.authService.getCurrentUser();
+
+    if (!usuarioActual) {
+      return of([]);
+    }
+
+    const creadorId = usuarioActual.usuarioId;
+    return this.http.get<Evento[]>(`${this.apiUrl}/por-creador/${creadorId}`);
   }
 
   getEvento(id: number): Observable<Evento> {
@@ -20,7 +28,14 @@ export class EventoService {
   }
 
   createEvento(evento: Evento): Observable<Evento> {
-    evento.creadorId = 1;
+    const usuarioActual = this.authService.getCurrentUser();
+
+    if (!usuarioActual) {
+      alert('Error: Debes iniciar sesión para poder crear un evento.');
+      return new Observable(observer => observer.error('Usuario no autenticado'));
+    }
+
+    evento.creadorId = usuarioActual.usuarioId;
     return this.http.post<Evento>(this.apiUrl, evento);
   }
 

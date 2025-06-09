@@ -4,17 +4,19 @@ import { RouterLink } from '@angular/router';
 import { EventoService } from '../evento.service';
 import { Evento } from '../../models/evento.model';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-evento-list',
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './evento-list.component.html',
+  styleUrls: ['./evento-list.component.css']
 })
 export class EventoListComponent implements OnInit {
-  eventos$: Observable<Evento[]> | undefined;
+  eventos$: Observable<Evento[]> | undefined
 
-  constructor(private eventoService: EventoService) { }
+  constructor(private eventoService: EventoService, public authService: AuthService) { }
 
   ngOnInit(): void {
     this.loadEventos();
