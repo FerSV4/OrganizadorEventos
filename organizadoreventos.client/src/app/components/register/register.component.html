@@ -1,0 +1,63 @@
+<div style="width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
+    <h2>Crear una Cuenta Nueva</h2>
+    <form [formGroup]="formularioRegistro" (ngSubmit)="enviarRegistro()">
+  
+      <div style="margin-bottom: 15px;">
+        <label for="nombreUsuario">Nombre de Usuario:</label>
+        <input id="nombreUsuario" type="text" formControlName="nombreUsuario" style="width: 95%; padding: 8px;">
+        <div *ngIf="formularioRegistro.get('nombreUsuario')?.invalid && formularioRegistro.get('nombreUsuario')?.touched" style="color: red;">
+          <small>El nombre de usuario es obligatorio.</small>
+        </div>
+      </div>
+  
+      <div style="margin-bottom: 15px;">
+        <label for="nombreCompleto">Nombre Completo:</label>
+        <input id="nombreCompleto" type="text" formControlName="nombreCompleto" style="width: 95%; padding: 8px;">
+         <div *ngIf="formularioRegistro.get('nombreCompleto')?.invalid && formularioRegistro.get('nombreCompleto')?.touched" style="color: red;">
+          <small>Nombre completo es obligatorio.</small>
+        </div>
+      </div>
+  
+      <div style="margin-bottom: 15px;">
+        <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+        <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" style="width: 95%; padding: 8px;">
+        <div *ngIf="formularioRegistro.get('fechaNacimiento')?.invalid && formularioRegistro.get('fechaNacimiento')?.touched" style="color: red;">
+          <small>fecha de nacimiento es obligatoria.</small>
+        </div>
+      </div>
+  
+      <div style="margin-bottom: 15px;">
+        <label for="direccion">Dirección (Opcional):</label>
+        <input id="direccion" type="text" formControlName="direccion" style="width: 95%; padding: 8px;">
+      </div>
+  
+      <div style="margin-bottom: 15px;">
+        <label for="correo">Correo Electrónico:</label>
+        <input id="correo" type="email" formControlName="correo" style="width: 95%; padding: 8px;">
+        <div *ngIf="formularioRegistro.get('correo')?.invalid && formularioRegistro.get('correo')?.touched" style="color: red;">
+          <small *ngIf="formularioRegistro.get('correo')?.errors?.['required']">El correo es obligatorio.</small>
+          <small *ngIf="formularioRegistro.get('correo')?.errors?.['email']">Introduce un formato de correo válido.</small>
+        </div>
+      </div>
+  
+      <div style="margin-bottom: 15px;">
+        <label for="password">Contraseña:</label>
+        <input id="password" type="password" formControlName="password" style="width: 95%; padding: 8px;">
+        <div *ngIf="formularioRegistro.get('password')?.invalid && formularioRegistro.get('password')?.touched" style="color: red;">
+           <small *ngIf="formularioRegistro.get('password')?.errors?.['required']">La contraseña es obligatoria.</small>
+           <small *ngIf="formularioRegistro.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</small>
+        </div>
+      </div>
+  
+      <div *ngIf="mensajeError" style="color: red; margin-bottom: 10px;">
+        {{ mensajeError }}
+      </div>
+  
+      <button type="submit" [disabled]="formularioRegistro.invalid" style="width: 100%; padding: 10px; background-color: #28a745; color: white; border: none;">
+        Registrarme
+      </button>
+    </form>
+     <div style="margin-top: 15px; text-align: center;">
+      <p>¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
+    </div>
+  </div>
