@@ -31,7 +31,7 @@ public class UsuariosController : ControllerBase
         return CreatedAtAction(nameof(GetUsuario), new { id = usuario.UsuarioId }, usuario);
     }
 
-//GET{id}
+//GET
     [HttpGet("{id}")]
     public async Task<ActionResult<Usuario>> GetUsuario(int id)
     {
@@ -44,4 +44,43 @@ public class UsuariosController : ControllerBase
 
         return Ok(usuario);
     }
+    // GET inscripciones
+
+    [HttpGet("{id}/inscripciones")]
+    public async Task<ActionResult<IEnumerable<Evento>>> GetInscripcionesUsuario(int id)
+    {
+
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario == null)
+        {
+            return NotFound("El usuario no existe.");
+        }
+
+
+        var eventosInscritos = await _context.ParticipanteEventos
+            .Where(p => p.UsuarioId == id)
+            .Select(p => p.Evento)
+            .ToListAsync(); 
+
+        return Ok(eventosInscritos);
+}
+// GET:eventosCreados
+
+    [HttpGet("{id}/eventosCreados")]
+    public async Task<ActionResult<IEnumerable<Evento>>> GetEventosCreados(int id)
+    {
+
+        var eventosCreados = await _context.Eventos
+            .Where(evento => evento.CreadorId == id)
+            .AsNoTracking()
+            .ToListAsync();
+
+        if (eventosCreados == null)
+        {
+            return Ok(new List<Evento>());
+        }
+
+        return Ok(eventosCreados);
+    }
+
 }

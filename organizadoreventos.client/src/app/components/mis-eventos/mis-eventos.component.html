@@ -1,0 +1,30 @@
+<h2>Mis Eventos Registrados</h2>
+    
+    <div *ngIf="!eventosInscrito.length">
+      <p>Aún no te has registrado a ningún evento.</p>
+    </div>
+    
+    <table *ngIf="eventosInscrito.length > 0">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Fecha</th>
+          <th>Lugar</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let evento of eventosInscrito">
+          <td>{{ evento.titulo }}</td>
+          <td>{{ evento.fecha | date: 'dd/MM/yyyy h:mm a' }}</td>
+          <td>{{ evento.lugar }}</td>
+          <td>
+            <button 
+              *ngIf="usuarioActual && usuarioActual.usuarioId === evento.creadorId" 
+              (click)="eliminarEvento(evento.eventoId)">
+              Eliminar Evento
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>

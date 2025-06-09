@@ -1,0 +1,35 @@
+<h2>Mis Eventos Creados</h2>
+    
+<div *ngIf="!eventosCreados.length">
+  <p>No tienes eventos creados<a routerLink="/eventos/nuevo">Crea eventos</a>!</p>
+</div>
+
+<table *ngIf="eventosCreados.length > 0">
+  <thead>
+    <tr>
+        <th>Título</th>
+        <th>Fecha</th>
+        <th>Lugar</th>
+        <th>Fecha Fin</th>
+        <th>Capacidad</th>
+        <th>Precio</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let evento of eventosCreados">
+        <td>{{ evento.titulo }}</td>
+        <td>{{ evento.fecha | date: 'short' }}</td>
+        <td>{{ evento.lugar }}</td>
+        <td>{{ evento.fechaFin }}</td>
+        <td>{{ evento.capacidad }}</td>
+        <td>{{ evento.precio }}</td>
+      <td>
+
+        <button (click)="eliminarEvento(evento.eventoId)">
+          Eliminar
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

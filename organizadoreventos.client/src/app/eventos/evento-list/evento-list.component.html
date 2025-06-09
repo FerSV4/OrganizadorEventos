@@ -7,7 +7,9 @@
       <th>Título</th>
       <th>Fecha</th>
       <th>Lugar</th>
-      <th>Acciones</th>
+      <th>Fecha Fin</th>
+      <th>Capacidad</th>
+      <th>Precio</th>
     </tr>
   </thead>
   <tbody>
@@ -15,8 +17,10 @@
       <td>{{ evento.titulo }}</td>
       <td>{{ evento.fecha | date: 'short' }}</td>
       <td>{{ evento.lugar }}</td>
+      <td>{{ evento.fechaFin }}</td>
+      <td>{{ evento.capacidad }}</td>
+      <td>{{ evento.precio }}</td>
       <td>
-        <button (click)="deleteEvento(evento.eventoId)">Eliminar</button>
       </td>
     </tr>
   </tbody>

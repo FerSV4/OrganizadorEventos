@@ -8,6 +8,7 @@ import { Evento } from '../models/evento.model';
 })
 export class EventoService {
   private apiUrl = '/api/eventos';
+  private userApiUrl = '/api/usuarios';
 
   constructor(private http: HttpClient) { }
 
@@ -20,7 +21,6 @@ export class EventoService {
   }
 
   createEvento(evento: Evento): Observable<Evento> {
-    evento.creadorId = 1;
     return this.http.post<Evento>(this.apiUrl, evento);
   }
 
@@ -30,5 +30,13 @@ export class EventoService {
 
   deleteEvento(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getEventosPorUsuario(usuarioId: number): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.userApiUrl}/${usuarioId}/inscripciones`);
+  }
+
+  getEventosCreadosPorUsuario(usuarioId: number): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.userApiUrl}/${usuarioId}/eventosCreados`);
   }
 }
