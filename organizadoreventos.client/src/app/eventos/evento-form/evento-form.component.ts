@@ -1,8 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { EventoService } from '../evento.service';
 import { Router } from '@angular/router';
+
+function validarRangoFechas(formulario: AbstractControl): ValidationErrors | null {
+  const fechaInicio = formulario.get('fecha')?.value;
+  const fechaFin = formulario.get('fechaFin')?.value;
+
+  if (fechaInicio && fechaFin && new Date(fechaFin) < new Date(fechaInicio)) {
+
+    return { rangoFechasInvalido: true };
+  }
+  
+  return null;
+}
 
 @Component({
   selector: 'app-evento-form',
@@ -11,31 +23,43 @@ import { Router } from '@angular/router';
   templateUrl: './evento-form.component.html',
 })
 export class EventoFormComponent {
-  eventoForm: FormGroup;
+
+  formularioEvento: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private eventoService: EventoService,
-    private router: Router
+    private creadorFormulario: FormBuilder,
+    private servicioEvento: EventoService,
+    private enrutador: Router
   ) {
-    this.eventoForm = this.fb.group({
+
+    this.formularioEvento = this.creadorFormulario.group({
+
       titulo: ['', Validators.required],
       descripcion: ['', Validators.required],
       fecha: ['', Validators.required],
-      lugar: ['']
+
+      lugar: [''],
+      fechaFin: [null], 
+      capacidad: [null, Validators.min(1)], 
+      precio: [null, Validators.min(0)]     
+    }, { 
+      validators: validarRangoFechas 
     });
   }
 
-  onSubmit(): void {
-    if (this.eventoForm.valid) {
-      const nuevoEvento = { ...this.eventoForm.value, eventoId: 0, estado: true };
-      this.eventoService.createEvento(nuevoEvento).subscribe({
-        next: () => {
-          alert('Evento creado exitosamente');
-          this.router.navigate(['/eventos']);
-        },
-        error: (err) => console.error('Error al crear el evento', err)
-      });
+  enviarFormulario(): void {
+   
+    if (this.formularioEvento.invalid) {
+      alert('Por favor, revisa los datos del formulario. Hay campos con errores.');
+      return; 
     }
+    const datosDelFormulario = this.formularioEvento.value;
+
+    this.servicioEvento.createEvento(datosDelFormulario).subscribe({
+      next: (eventoCreado) => {
+        alert(`El evento "${eventoCreado.titulo}" ha sido creado`);
+        this.enrutador.navigate(['/eventos']);
+      },
+    });
   }
 }
