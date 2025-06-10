@@ -8,7 +8,7 @@ La aplicación está construida con un backend de API REST usando .NET y un fron
 
 ### Backend
 * **.NET 9** - Framework para la construcción de la API.
-* **ASP.NET Core Web API** - Plantilla para crear los servicios RESTful.
+* **ASP.NET Core Web API** - Plantilla para crear los servicios REST.
 * **Entity Framework Core (EF Core)** - para la interacción con la base de datos.
 * **SQL Server** - Sistema de gestión de base de datos.
 * **xUnit** - Framework para las pruebas unitarias del backend.
