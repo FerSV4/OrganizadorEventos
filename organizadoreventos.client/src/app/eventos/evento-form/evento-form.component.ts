@@ -28,7 +28,7 @@ function VerCamposBlancos(control: AbstractControl): ValidationErrors | null {
 export class EventoFormComponent implements OnInit {
   
   formularioEvento: FormGroup;
-  esModoEdicion = false;
+  ModoEdit = false;
   private idEventoActual: number | null = null;
 
   constructor(
@@ -54,20 +54,20 @@ export class EventoFormComponent implements OnInit {
   ngOnInit(): void {
     const idParam = this.rutaActiva.snapshot.paramMap.get('id');
     if (idParam) {
-      this.esModoEdicion = true;
+      this.ModoEdit = true;
       this.idEventoActual = +idParam;
       this.servicioEvento.getEvento(this.idEventoActual).subscribe(evento => {
         const eventoParaFormulario = {
           ...evento,
-          fecha: this.formatearFechaParaInput(evento.fecha),
-          fechaFin: evento.fechaFin ? this.formatearFechaParaInput(evento.fechaFin) : null
+          fecha: this.FormatoFechaMod(evento.fecha),
+          fechaFin: evento.fechaFin ? this.FormatoFechaMod(evento.fechaFin) : null
         };
         this.formularioEvento.patchValue(eventoParaFormulario);
       });
     }
   }
 
-  private formatearFechaParaInput(fecha: any): string {
+  private FormatoFechaMod(fecha: any): string {
     if (!fecha) return '';
     const d = new Date(fecha);
     return d.toISOString().substring(0, 16);
@@ -76,21 +76,21 @@ export class EventoFormComponent implements OnInit {
   enviarFormulario(): void {
     const usuarioLogueado = this.servicioAuth.getUsuarioLogueado();
     if (!usuarioLogueado) {
-      alert('Debes iniciar sesión para realizar esta acción.');
+      alert('Debes iniciar sesión');
       this.enrutador.navigate(['/login']);
       return;
     }
 
-    if (this.esModoEdicion && this.idEventoActual) {
+    if (this.ModoEdit && this.idEventoActual) {
       const eventoActualizado = { ...this.formularioEvento.value, eventoId: this.idEventoActual, creadorId: usuarioLogueado.usuarioId };
       this.servicioEvento.updateEvento(this.idEventoActual, eventoActualizado).subscribe(() => {
-        alert('Evento actualizado exitosamente');
+        alert('Evento actualizado');
         this.enrutador.navigate(['/mis-eventos-creados']);
       });
     } else {
       const nuevoEvento = { ...this.formularioEvento.value, creadorId: usuarioLogueado.usuarioId };
       this.servicioEvento.createEvento(nuevoEvento).subscribe(() => {
-        alert('Evento creado exitosamente');
+        alert('Evento creado');
         this.enrutador.navigate(['/eventos']);
       });
     }

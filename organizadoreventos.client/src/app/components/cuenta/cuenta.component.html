@@ -1,13 +1,10 @@
 <div class="account-container" style="padding: 20px; max-width: 600px; margin: auto;">
     <h2>Mi Cuenta</h2>
-    <div *ngIf="usuarioActual; else noUser" style="line-height: 1.8;">
+    <div *ngIf="usuarioActual" style="line-height: 1.8;">
       <p><strong>Nombre de Usuario:</strong> {{ usuarioActual.nombreUsuario }}</p>
       <p><strong>Nombre Completo:</strong> {{ usuarioActual.nombreCompleto }}</p>
       <p><strong>Correo Electrónico:</strong> {{ usuarioActual.correo }}</p>
-      <p><strong>Fecha de Nacimiento:</strong> {{ usuarioActual.fechaNacimiento | date:'longDate' }}</p>
-      <p><strong>Dirección:</strong> {{ usuarioActual.direccion || 'No especificada' }}</p>
+      <p><strong>Fecha de Nacimiento:</strong> {{ usuarioActual.fechaNacimiento}}</p>
+      <p><strong>Dirección:</strong> {{ usuarioActual.direccion}}</p>
     </div>
-    <ng-template #noUser>
-      <p>No se pudo cargar la información del usuario. Por favor, intenta iniciar sesión de nuevo.</p>
-    </ng-template>
   </div>
