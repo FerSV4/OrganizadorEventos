@@ -4,6 +4,7 @@
   <thead>
     <tr>
       <th>Título</th>
+      <th>Descripción</th>
       <th>Fecha</th>
       <th>Fecha Fin</th>
       <th>Lugar</th>
@@ -15,6 +16,7 @@
   <tbody>
     <tr *ngFor="let evento of eventos">
       <td>{{ evento.titulo }}</td>
+      <td>{{ evento.descripcion }}</td>
       <td>{{ evento.fecha | date: 'dd/MM/yyyy h:mm a'}}</td>
       <td>{{ evento.fechaFin | date: 'dd/MM/yyyy h:mm a'}}</td>
       <td>{{ evento.lugar }}</td>
