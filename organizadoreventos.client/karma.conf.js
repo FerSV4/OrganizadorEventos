@@ -11,18 +11,14 @@
     ],
     client: {
       jasmine: {
-        // you can add configuration options for Jasmine here
-        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
-        // for example, you can disable the random execution with `random: false`
-        // or set a specific seed with `seed: 4321`
       },
-      clearContext: false // leave Jasmine Spec Runner output visible in browser
+      clearContext: false
     },
     jasmineHtmlReporter: {
-      suppressAll: true // removes the duplicated traces
+      suppressAll: true 
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/'),
+      dir: require('path').join(__dirname, './coverage/organizador-eventos-client'),
       subdir: '.',
       reporters: [
         { type: 'html' },
@@ -36,9 +32,6 @@
     autoWatch: true,
     browsers: ['Chrome'],
     singleRun: false,
-    restartOnFileChange: true,
-    listenAddress: 'localhost',
-    hostname: 'localhost'
+    restartOnFileChange: true
   });
 };
-

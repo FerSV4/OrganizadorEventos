@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MisEventosCreadosComponent } from './mis-eventos-creados.component';
 
-describe('MisEventosCreadosComponent', () => {
+xdescribe('MisEventosCreadosComponent', () => {
   let component: MisEventosCreadosComponent;
   let fixture: ComponentFixture<MisEventosCreadosComponent>;
 

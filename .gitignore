@@ -5,3 +5,5 @@
 /OrganizadorEventos.Server/obj
 /OrganizadorEventos.Server/Migrations
 /organizadoreventos.client/.vscode
+/OrganizadorEventos.Server.Tests/bin
+/OrganizadorEventos.Server.Tests/obj
