@@ -1,1 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+/* Se creó un estilo global para la clase tabla ya que se usa en varios componentes */
+table {
+    border-spacing: 15px;
+}

@@ -1,65 +1,60 @@
-<h3>Crear Nuevo Evento</h3>
+<h2>{{ ModoEdit ? 'Editar Evento' : 'Crear Nuevo Evento' }}</h2>
 
 <form [formGroup]="formularioEvento" (ngSubmit)="enviarFormulario()">
   
-
   <div>
     <label for="titulo">Título:</label>
     <input id="titulo" formControlName="titulo">
-
-    <div *ngIf="formularioEvento.get('titulo')?.invalid && formularioEvento.get('titulo')?.touched" style="color: red;">
-      <small>El título es obligatorio.</small>
+    <div *ngIf="formularioEvento.get('titulo')?.invalid && formularioEvento.get('titulo')?.touched">
+      <small *ngIf="formularioEvento.get('titulo')?.errors?.['CampoBlanco']">El título es obligatorio y no puede estar en blanco.</small>
     </div>
   </div>
 
   <div>
     <label for="descripcion">Descripción:</label>
     <textarea id="descripcion" formControlName="descripcion"></textarea>
-    <div *ngIf="formularioEvento.get('descripcion')?.invalid && formularioEvento.get('descripcion')?.touched" style="color: red;">
-      <small>La descripción es obligatoria.</small>
+    <div *ngIf="formularioEvento.get('descripcion')?.invalid && formularioEvento.get('descripcion')?.touched">
+      <small *ngIf="formularioEvento.get('descripcion')?.errors?.['CampoBlanco']">La descripción es obligatoria y no puede estar en blanco.</small>
     </div>
   </div>
 
   <div>
     <label for="fecha">Fecha de Inicio:</label>
     <input id="fecha" type="datetime-local" formControlName="fecha">
-    <div *ngIf="formularioEvento.get('fecha')?.invalid && formularioEvento.get('fecha')?.touched" style="color: red;">
-      <small>La fecha de inicio es obligatoria.</small>
-    </div>
   </div>
-
 
   <div>
     <label for="lugar">Lugar:</label>
-    <input id="lugar" formControlName="lugar">
+    <input type="text" id="lugar" formControlName="lugar">
+    <div *ngIf="formularioEvento.get('lugar')?.invalid && formularioEvento.get('lugar')?.touched">
+      <small *ngIf="formularioEvento.get('lugar')?.errors?.['CampoBlanco']">El lugar es obligatorio y no puede estar en blanco.</small>
+    </div>
   </div>
-
 
   <div>
     <label for="fechaFin">Fecha de Finalización (Opcional):</label>
     <input id="fechaFin" type="datetime-local" formControlName="fechaFin">
-
-    <div *ngIf="formularioEvento.hasError('rangoFechasInvalido')" style="color: red;">
-      <small>La fecha de finalización no puede ser anterior a la de inicio.</small>
+    <div *ngIf="formularioEvento.hasError('FechaInvalida') && formularioEvento.get('fechaFin')?.dirty">
+      <small>La fecha de finalización no puede ser antes de la de inicio.</small>
     </div>
   </div>
 
   <div>
     <label for="capacidad">Capacidad (Opcional):</label>
     <input id="capacidad" type="number" formControlName="capacidad">
-    <div *ngIf="formularioEvento.get('capacidad')?.hasError('min')" style="color: red;">
-      <small>La capacidad debe ser de al menos 1.</small>
+    <div *ngIf="formularioEvento.get('capacidad')?.hasError('min')">
+      <small>La capacidad debe ser al menos 1.</small>
     </div>
   </div>
-
 
   <div>
     <label for="precio">Precio (Opcional):</label>
     <input id="precio" type="number" step="0.01" formControlName="precio">
-    <div *ngIf="formularioEvento.get('precio')?.hasError('min')" style="color: red;">
-      <small>El precio no puede ser un número negativo.</small>
+     <div *ngIf="formularioEvento.get('precio')?.hasError('min')">
+      <small>El precio no puede ser negativo.</small>
     </div>
   </div>
 
-  <button type="submit" [disabled]="formularioEvento.invalid">Guardar Evento</button>
+  <button type="submit" [disabled]="formularioEvento.invalid">{{ ModoEdit ? 'Guardar Cambios' : 'Crear Evento' }}</button>
+
 </form>

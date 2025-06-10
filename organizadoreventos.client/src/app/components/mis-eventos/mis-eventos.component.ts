@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
     @Component({
       selector: 'app-mis-eventos',
       standalone: true,
-      imports: [CommonModule, RouterLink],
+      imports: [CommonModule],
       templateUrl: './mis-eventos.component.html',
     })
     export class MisEventosComponent implements OnInit {
@@ -33,7 +33,6 @@ import { Component, OnInit } from '@angular/core';
           this.router.navigate(['/login']);
           return;
         }
-    
 
         this.cargarMisEventos();
       }
@@ -43,23 +42,19 @@ import { Component, OnInit } from '@angular/core';
           this.eventoService.getEventosPorUsuario(this.usuarioActual.usuarioId).subscribe({
             next: (eventos) => {
               this.eventosInscrito = eventos;
-            },
-            error: () => console.error('Error al cargar los eventos')
+            }
           });
         }
       }
+      cancelarInscripcion(eventoId: number): void {
+        if (!this.usuarioActual) return;
     
-      eliminarEvento(id: number): void {
-        if (confirm('¿Estás seguro de que quieres eliminar este evento?')) {
-          this.eventoService.deleteEvento(id).subscribe({
+        if (confirm('¿Quieres cancelar la incripcion?')) {
+          this.eventoService.cancelarInscripcion(eventoId, this.usuarioActual.usuarioId).subscribe({
             next: () => {
-              alert('Evento eliminado');
-
-              this.cargarMisEventos();
+              alert('Inscripción cancelada');
+              this.cargarMisEventos(); 
             },
-            error: () => {
-              alert('No se pudo eliminar el evento.');
-            }
           });
         }
       }
