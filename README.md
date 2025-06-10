@@ -15,8 +15,8 @@ La aplicación está construida con un backend de API REST usando .NET y un fron
 
 ### Frontend
 * **Angular 17+** - Framework para la construcción de la interfaz de usuario.
-* **TypeScript** - Superset de JavaScript que añade tipado estático.
-* **Angular CLI** - Herramienta de línea de comandos para gestionar el proyecto de Angular.
+* **TypeScript** - Para la implementacion de servicios.
+* **Angular CLI** - Para la interaccion del proyecto con Angular.
 * **Jasmine y Karma** - Frameworks para las pruebas unitarias del frontend.
 
 ## Características Principales
