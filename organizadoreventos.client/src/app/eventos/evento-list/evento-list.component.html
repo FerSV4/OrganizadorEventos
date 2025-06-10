@@ -10,6 +10,7 @@
       <th>Lugar</th>
       <th>Capacidad</th>
       <th>Precio</th>
+      <th>Creador</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -22,6 +23,7 @@
       <td>{{ evento.lugar }}</td>
       <td>{{ evento.capacidad }}</td>
       <td>{{ evento.precio | currency }}</td>
+      <td>{{ evento.creadorNombreUsuario }}</td>
       <td>
         <ng-container *ngIf="usuarioActual">
           <button 

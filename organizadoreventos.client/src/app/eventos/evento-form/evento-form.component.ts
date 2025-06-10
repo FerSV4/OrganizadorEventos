@@ -42,7 +42,7 @@ export class EventoFormComponent implements OnInit {
       titulo: ['', [Validators.required, VerCamposBlancos]],
       descripcion: ['', [Validators.required, VerCamposBlancos]],
       fecha: ['', Validators.required],
-      lugar: [''],
+      lugar: ['', [Validators.required, VerCamposBlancos]],
       fechaFin: [null],
       capacidad: [null, [Validators.min(1)]],
       precio: [null, [Validators.min(0)]]

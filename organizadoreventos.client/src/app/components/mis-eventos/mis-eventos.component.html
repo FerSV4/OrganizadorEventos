@@ -14,6 +14,7 @@
       <th>Lugar</th>
       <th>Capacidad</th>
       <th>Precio</th>
+      <th>Creador</th>
       <th>Accion</th>
         </tr>
       </thead>
@@ -26,6 +27,7 @@
       <td>{{ evento.lugar }}</td>
       <td>{{ evento.capacidad }}</td>
       <td>{{ evento.precio | currency }}</td>
+      <td>{{ evento.creadorNombreUsuario }}</td>
       <button (click)="cancelarInscripcion(evento.eventoId)">
         Cancelar Inscripción
       </button>

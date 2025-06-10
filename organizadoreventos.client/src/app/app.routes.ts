@@ -5,6 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { MisEventosComponent } from './components/mis-eventos/mis-eventos.component';
 import { MisEventosCreadosComponent } from './components/mis-eventos-creados/mis-eventos-creados.component';
+import { CuentaComponent } from './components/cuenta/cuenta.component';
 
 //ROUTER para cumplir el requerimiento de SPA   
 export const routes: Routes = [
@@ -16,4 +17,5 @@ export const routes: Routes = [
     { path: 'register', component: RegisterComponent },
     { path: 'mis-eventos', component: MisEventosComponent },
     { path: 'mis-eventos-creados', component: MisEventosCreadosComponent },
+    { path: 'cuenta', component: CuentaComponent },
 ];

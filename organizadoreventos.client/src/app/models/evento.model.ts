@@ -10,4 +10,5 @@ export interface Evento {
   fechaFin?: Date;
   capacidad?: number;
   precio?: number;
+  creadorNombreUsuario?: string;
 }
