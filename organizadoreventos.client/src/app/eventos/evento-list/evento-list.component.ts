@@ -10,7 +10,7 @@ import { Usuario } from '../../models/usuario.interface';
 @Component({
   selector: 'app-evento-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './evento-list.component.html',
 })
 export class EventoListComponent implements OnInit {

@@ -6,11 +6,11 @@ import { RegisterComponent } from './components/register/register.component';
 import { MisEventosComponent } from './components/mis-eventos/mis-eventos.component';
 import { MisEventosCreadosComponent } from './components/mis-eventos-creados/mis-eventos-creados.component';
 
+//ROUTER para cumplir el requerimiento de SPA   
 export const routes: Routes = [
     { path: '', redirectTo: '/eventos', pathMatch: 'full' },
     { path: 'eventos', component: EventoListComponent },
     { path: 'eventos/nuevo', component: EventoFormComponent },
-
     { path: 'eventos/editar/:id', component: EventoFormComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },

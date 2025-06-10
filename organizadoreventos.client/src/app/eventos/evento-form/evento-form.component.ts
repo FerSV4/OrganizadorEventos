@@ -1,84 +1,98 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { EventoService } from '../evento.service';
-import { Evento } from '../../models/evento.model';
-import { AuthService } from '../../services/auth.service';
-import { Usuario } from '../../models/usuario.interface';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { EventoService } from '../evento.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+
+function VerRangoFechas(formulario: AbstractControl): ValidationErrors | null {
+  const fechaInicio = formulario.get('fecha')?.value;
+  const fechaFin = formulario.get('fechaFin')?.value;
+  if (fechaInicio && fechaFin && new Date(fechaFin) < new Date(fechaInicio)) {
+    return { FechaInvalida: true };
+  }
+  return null;
+}
+
+function VerCamposBlancos(control: AbstractControl): ValidationErrors | null {
+    const esSoloEspacios = (control.value || '').trim().length === 0;
+    return esSoloEspacios ? { 'CampoBlanco': true } : null;
+}
 
 @Component({
   selector: 'app-evento-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './evento-form.component.html',
 })
 export class EventoFormComponent implements OnInit {
-
-  evento: Evento = {
-    eventoId: 0,
-    titulo: '',
-    descripcion: '',
-    fecha: new Date(),
-    lugar: '',
-    creadorId: 0,
-    estado: true
-  };
-  usuarioActual: Usuario | null = null;
-  isEditMode = false;
-  private eventoId: number | null = null;
+  
+  formularioEvento: FormGroup;
+  esModoEdicion = false;
+  private idEventoActual: number | null = null;
 
   constructor(
-    private eventoService: EventoService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private authService: AuthService
-  ) { }
+    private creadorFormulario: FormBuilder,
+    private servicioEvento: EventoService,
+    private servicioAuth: AuthService,
+    private enrutador: Router,
+    private rutaActiva: ActivatedRoute
+  ) {
+    this.formularioEvento = this.creadorFormulario.group({
+      titulo: ['', [Validators.required, VerCamposBlancos]],
+      descripcion: ['', [Validators.required, VerCamposBlancos]],
+      fecha: ['', Validators.required],
+      lugar: [''],
+      fechaFin: [null],
+      capacidad: [null, [Validators.min(1)]],
+      precio: [null, [Validators.min(0)]]
+    }, { 
+      validators: VerRangoFechas 
+    });
+  }
 
   ngOnInit(): void {
-
-    this.authService.usuarioActual$.subscribe(usuario => {
-        this.usuarioActual = usuario;
-    });
-
-    const idParam = this.route.snapshot.paramMap.get('id');
-    
+    const idParam = this.rutaActiva.snapshot.paramMap.get('id');
     if (idParam) {
-      this.isEditMode = true;
-      this.eventoId = +idParam;
-      this.eventoService.getEvento(this.eventoId).subscribe(data => {
-        data.fecha = this.formatDateForInput(data.fecha);
-        if (data.fechaFin) {
-            data.fechaFin = this.formatDateForInput(data.fechaFin);
-        }
-        this.evento = data;
+      this.esModoEdicion = true;
+      this.idEventoActual = +idParam;
+      this.servicioEvento.getEvento(this.idEventoActual).subscribe(evento => {
+        const eventoParaFormulario = {
+          ...evento,
+          fecha: this.formatearFechaParaInput(evento.fecha),
+          fechaFin: evento.fechaFin ? this.formatearFechaParaInput(evento.fechaFin) : null
+        };
+        this.formularioEvento.patchValue(eventoParaFormulario);
       });
     }
   }
 
-  onSubmit(): void {
-    if (this.isEditMode && this.eventoId) {
-      this.eventoService.updateEvento(this.eventoId, this.evento).subscribe(() => {
-        alert('Evento actualizado con éxito');
-        this.router.navigate(['/mis-eventos-creados']);
+  private formatearFechaParaInput(fecha: any): string {
+    if (!fecha) return '';
+    const d = new Date(fecha);
+    return d.toISOString().substring(0, 16);
+  }
+
+  enviarFormulario(): void {
+    const usuarioLogueado = this.servicioAuth.getUsuarioLogueado();
+    if (!usuarioLogueado) {
+      alert('Debes iniciar sesión para realizar esta acción.');
+      this.enrutador.navigate(['/login']);
+      return;
+    }
+
+    if (this.esModoEdicion && this.idEventoActual) {
+      const eventoActualizado = { ...this.formularioEvento.value, eventoId: this.idEventoActual, creadorId: usuarioLogueado.usuarioId };
+      this.servicioEvento.updateEvento(this.idEventoActual, eventoActualizado).subscribe(() => {
+        alert('Evento actualizado exitosamente');
+        this.enrutador.navigate(['/mis-eventos-creados']);
       });
     } else {
-      if (this.usuarioActual) {
-        this.evento.creadorId = this.usuarioActual.usuarioId;
-        this.eventoService.createEvento(this.evento).subscribe(() => {
-          alert('Evento creado con éxito');
-          this.router.navigate(['/eventos']);
-        });
-      } else {
-        alert('Error: Debes iniciar sesión para crear un evento.');
-        this.router.navigate(['/login']);
-      }
+      const nuevoEvento = { ...this.formularioEvento.value, creadorId: usuarioLogueado.usuarioId };
+      this.servicioEvento.createEvento(nuevoEvento).subscribe(() => {
+        alert('Evento creado exitosamente');
+        this.enrutador.navigate(['/eventos']);
+      });
     }
-  }
-
-  private formatDateForInput(date: any): any {
-    if (!date) return '';
-    const d = new Date(date);
-    return d.toISOString().slice(0, 16);
   }
 }

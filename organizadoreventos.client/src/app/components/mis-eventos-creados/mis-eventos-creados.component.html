@@ -5,17 +5,24 @@
     <tr>
       <th>Título</th>
       <th>Fecha</th>
+      <th>Fecha Fin</th>
       <th>Lugar</th>
+      <th>Capacidad</th>
+      <th>Precio</th>
       <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let evento of eventos">
       <td>{{ evento.titulo }}</td>
-      <td>{{ evento.fecha | date: 'short' }}</td>
+      <td>{{ evento.fecha | date: 'dd/MM/yyyy h:mm a'}}</td>
+      <td>{{ evento.fechaFin | date: 'dd/MM/yyyy h:mm a'}}</td>
       <td>{{ evento.lugar }}</td>
+      <td>{{ evento.capacidad }}</td>
+      <td>{{ evento.precio | currency }}</td>
       <td>
         <button [routerLink]="['/eventos/editar', evento.eventoId]" class="btn-editar">Editar</button>
+        <button (click)="eliminarEvento(evento.eventoId)">Eliminar</button>
         </td>
     </tr>
   </tbody>
