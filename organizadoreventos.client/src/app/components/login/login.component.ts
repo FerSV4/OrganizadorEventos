@@ -17,7 +17,6 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
- 
     const usuarioLogueado = this.authService.getUsuarioLogueado();
     
     if (usuarioLogueado) {
@@ -27,9 +26,14 @@ export class LoginComponent implements OnInit {
 
   onLogin(): void {
     this.errorMessage = null;
+
+    if (!this.loginData.password?.trim()) {
+      this.errorMessage = 'Los campos son obligatorios Y/O no permiten espacios blancos.';
+      return;
+    }
+
     this.authService.login(this.loginData).subscribe({
-      next: (usuario) => {
-        console.log('Login exitoso:', usuario);
+      next: () => {
         this.router.navigate(['/mis-eventos-creados']);
       },
       error: () => {

@@ -1,35 +1,44 @@
 <div style="width: 300px; margin: 50px auto; padding: 20px; border: 1px solid #ccc;">
-    <h2>Iniciar Sesión</h2>
-    <form (ngSubmit)="onLogin()">
-      <div style="margin-bottom: 15px;">
-        <label for="correo">Correo Electrónico:</label><br>
-        <input 
-          type="email" 
-          id="correo" 
-          name="correo" 
-          [(ngModel)]="loginData.correo" 
-          required
-          style="width: 95%; padding: 8px;">
+  <h2>Iniciar Sesión</h2>
+  <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+    <div style="margin-bottom: 15px;">
+      <label for="correo">Correo Electrónico:</label><br>
+      <input 
+        type="email" 
+        id="correo" 
+        name="correo" 
+        [(ngModel)]="loginData.correo" 
+        required
+        email
+        #correo="ngModel"
+        style="width: 95%; padding: 8px;">
+      <div *ngIf="correo.invalid">
+          <small *ngIf="correo.errors?.['required']">El correo es obligatorio.</small>
       </div>
-      <div style="margin-bottom: 15px;">
-        <label for="password">Contraseña:</label><br>
-        <input 
-          type="password" 
-          id="password" 
-          name="password"
-          [(ngModel)]="loginData.password" 
-          required
-          style="width: 95%; padding: 8px;">
-      </div>
-      <div *ngIf="errorMessage">
-        {{ errorMessage }}
-      </div>
-  
-      <button type="submit">
-        Ingresar
-      </button>
-    </form>
-    <div style="margin-top: 15px; text-align: center;">
-      <p>¿No tienes una cuenta? <a href="/register">Regístrate aquí</a></p>
     </div>
+    <div style="margin-bottom: 15px;">
+      <label for="password">Contraseña:</label><br>
+      <input 
+        type="password" 
+        id="password" 
+        name="password"
+        [(ngModel)]="loginData.password" 
+        required
+        #password="ngModel"
+        style="width: 95%; padding: 8px;">
+      <div *ngIf="password.invalid">
+          <small *ngIf="password.errors?.['required']">La contraseña es obligatoria.</small>
+      </div>
+    </div>
+    <div *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="!loginForm.form.valid">
+      Ingresar
+    </button>
+  </form>
+  <div style="margin-top: 15px; text-align: center;">
+    <p>¿No tienes una cuenta? <a routerLink="/register">Regístrate aquí</a></p>
   </div>
+</div>

@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+
+function VerCamposBlancos(control: AbstractControl): ValidationErrors | null {
+    const CampoInvalido = (control.value || '').trim().length === 0;
+    return CampoInvalido ? { 'soloEspacios': true } : null;
+}
 
 @Component({
   selector: 'app-register',
@@ -13,8 +18,8 @@ import { AuthService } from '../../services/auth.service';
 })
 export class RegisterComponent {
 
-  formularioRegistro: FormGroup;
-  mensajeError: string | null = null;
+  FormRegistro: FormGroup;
+  Errormsg: string | null = null;
 
   constructor(
     private creadorFormulario: FormBuilder,
@@ -22,32 +27,34 @@ export class RegisterComponent {
     private enrutador: Router
   ) {
 
-    this.formularioRegistro = this.creadorFormulario.group({
-      nombreUsuario: ['', Validators.required],
-      nombreCompleto: ['', Validators.required],
+    this.FormRegistro = this.creadorFormulario.group({
+      nombreUsuario: ['', [Validators.required, VerCamposBlancos]],
+      nombreCompleto: ['', [Validators.required, VerCamposBlancos]],
       fechaNacimiento: ['', Validators.required],
       direccion: [''], 
       correo: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6), VerCamposBlancos]]
     });
   }
 
   enviarRegistro(): void {
-    this.mensajeError = null; 
+    this.Errormsg = null; 
 
-    if (this.formularioRegistro.invalid) {
-      alert('Campos ingresados incorrectamente');
+    if (this.FormRegistro.invalid) {
+      alert('Revisa los datos ingresados.');
       return;
     }
 
-    const datosUsuario = this.formularioRegistro.value;
+    const datosUsuario = this.FormRegistro.value;
 
     this.servicioAuth.register(datosUsuario).subscribe({
-      next: (usuarioRegistrado) => {
-        alert(`Usuario registrado Correctamente`);
-
+      next: () => {
+        alert(`Registro correcto`);
         this.enrutador.navigate(['/login']);
       },
+      error: () => {
+        this.Errormsg = 'Error';
+      }
     });
   }
 }
