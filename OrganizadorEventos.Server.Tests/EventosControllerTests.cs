@@ -1,5 +1,3 @@
-// Archivo: OrganizadorEventos.Server.Tests/EventosControllerTests.cs
-
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
 using OrganizadorEventos.Server.Controllers;
@@ -7,45 +5,38 @@ using OrganizadorEventos.Server.Models;
 using OrganizadorEventos.Server.Services;
 using System;
 
-// --- Este es el "Doble de Acción" ---
-public class EventoServiceMock : EventoService
+public class InstanciaEventoService : EventoService
 {
-    // Sobrescribimos el método gracias a que el original es 'virtual'
     public override Evento? ObtenerEventoPorId(int id)
     {
         if (id == 969)
         {
-            return null; // Simulamos que no se encontró
+            return null;
         }
-        return new Evento { EventoId = id, Titulo = "Evento de Prueba", Lugar = "Lugar", Descripcion = "Desc" };
+        return new Evento { EventoId = id, Titulo = "ElnuevoTest", Lugar = "Ucb", Descripcion = "2025" };
     }
-
-    // El constructor base necesita un DbContext, pero como no lo usaremos, pasamos null.
-    public EventoServiceMock() : base(null) { }
+//Para evitar usar la base de datos real, creamos la respuesta falsa NULL
+    public InstanciaEventoService() : base(null) { }
 }
 
-// --- Esta es la Prueba ---
 public class EventosControllerTests
 {
     private readonly EventosController _controlador;
-    private readonly EventoService _servicioFalso;
+    private readonly EventoService _serviceEvento;
 
     public EventosControllerTests()
     {
-        _servicioFalso = new EventoServiceMock();
-        _controlador = new EventosController(_servicioFalso);
+        _serviceEvento = new InstanciaEventoService();
+        _controlador = new EventosController(_serviceEvento);
     }
 
     [Fact]
-    public void Test_Evento_ID_No_existente()
+    public void Prueba_para_evento_no_existente()
     {
-        // Arrange
         var idParaPrueba = 969;
 
-        // Act
         var resultado = _controlador.GetEvento(idParaPrueba);
-
-        // Assert
+    //La verificacion si no se encuentra el evento.
         Assert.IsType<NotFoundResult>(resultado.Result);
     }
 }
