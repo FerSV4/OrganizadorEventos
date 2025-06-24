@@ -32,7 +32,7 @@ namespace OrganizadorEventos.Server.Services
             return eventos;
         }
 
-        public Evento? ObtenerEventoPorId(int id)
+        public virtual Evento? ObtenerEventoPorId(int id)
         {
             var evento = _context.Eventos
                 .Include(e => e.Creador)

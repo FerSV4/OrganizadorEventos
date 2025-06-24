@@ -36,7 +36,7 @@ namespace OrganizadorEventos.Server.Services
                 .FirstOrDefault(u => u.Correo == loginDto.Correo && u.Password == loginDto.Password);
         }
 
-        public IEnumerable<Evento> ObtenerInscripcionesDeUsuario(int usuarioId)
+        public virtual IEnumerable<Evento> ObtenerInscripcionesDeUsuario(int usuarioId)
         {
             var eventos = _context.ParticipanteEventos
                 .Where(p => p.UsuarioId == usuarioId)
