@@ -1,90 +1,44 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OrganizadorEventos.Server.Models;
+using OrganizadorEventos.Server.Services;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class UsuariosController : ControllerBase
+namespace OrganizadorEventos.Server.Controllers
 {
-    private readonly OrganizadorEventosContext _context;
-
-    public UsuariosController(OrganizadorEventosContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsuariosController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly UsuarioService _servicioUsuario;
 
-    // POST USER
-    [HttpPost]
-    public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
-    {
-        if (!ModelState.IsValid)
+        public UsuariosController(UsuarioService servicioUsuario)
         {
-            return BadRequest(ModelState);
+            _servicioUsuario = servicioUsuario;
         }
-        _context.Usuarios.Add(usuario);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetUsuario), new { id = usuario.UsuarioId }, usuario);
-    }
 
-    // GET USER
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Usuario>> GetUsuario(int id)
-    {
-        var usuario = await _context.Usuarios.FindAsync(id);
-        if (usuario == null)
+        [HttpGet("{id}")]
+        public ActionResult<Usuario> GetUsuario(int id)
         {
-            return NotFound();
-        }
-        return Ok(usuario);
-    }
-
-    [HttpGet("{id}/inscripciones")]
-    public async Task<ActionResult<IEnumerable<Evento>>> GetInscripcionesUsuario(int id)
-    {
-        var eventos = await _context.ParticipanteEventos
-            .Where(p => p.UsuarioId == id)
-            .AsNoTracking()
-            .Include(p => p.Evento)
-                .ThenInclude(e => e.Creador)
-            .Select(p => p.Evento)
-            .ToListAsync();
-
-        foreach (var evento in eventos)
-        {
-            if (evento.Creador != null)
+            var usuario = _servicioUsuario.ObtenerUsuarioPorId(id);
+            if (usuario == null)
             {
-                evento.CreadorNombreUsuario = evento.Creador.NombreUsuario;
+                return NotFound();
             }
+            return Ok(usuario);
         }
 
-        return Ok(eventos);
-    }
-
-    [HttpGet("{id}/eventosCreados")]
-    public async Task<ActionResult<IEnumerable<Evento>>> GetEventosCreados(int id)
-    {
-        var usuario = await _context.Usuarios
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.UsuarioId == id);
-            
-        if (usuario == null)
+        [HttpGet("{id}/inscripciones")]
+        public ActionResult<IEnumerable<Evento>> GetInscripcionesUsuario(int id)
         {
-            return NotFound("El usuario no existe.");
+            var eventos = _servicioUsuario.ObtenerInscripcionesDeUsuario(id);
+            return Ok(eventos);
         }
 
-        var eventosCreados = await _context.Eventos
-            .Where(evento => evento.CreadorId == id)
-            .AsNoTracking()
-            .ToListAsync();
-
-        foreach (var evento in eventosCreados)
+        [HttpGet("{id}/eventosCreados")]
+        public ActionResult<IEnumerable<Evento>> GetEventosCreados(int id)
         {
-            evento.CreadorNombreUsuario = usuario.NombreUsuario;
+            var eventos = _servicioUsuario.ObtenerEventosCreadosPorUsuario(id);
+            return Ok(eventos);
         }
-
-        return Ok(eventosCreados);
     }
 }

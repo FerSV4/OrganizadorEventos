@@ -1,143 +1,85 @@
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OrganizadorEventos.Server.Models;
-using System;
+using OrganizadorEventos.Server.Services;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class EventosController : ControllerBase
+namespace OrganizadorEventos.Server.Controllers
 {
-    private readonly OrganizadorEventosContext _context;
-
-    public EventosController(OrganizadorEventosContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EventosController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly EventoService _servicioEvento;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Evento>>> GetEventos()
-    {
-        var eventos = await _context.Eventos
-                                    .Include(e => e.Creador)
-                                    .AsNoTracking()
-                                    .ToListAsync();
-
-        foreach (var evento in eventos)
+        public EventosController(EventoService servicioEvento)
         {
-            if (evento.Creador != null)
-            {
-                evento.CreadorNombreUsuario = evento.Creador.NombreUsuario;
-            }
+            _servicioEvento = servicioEvento;
         }
 
-        return Ok(eventos);
-    }
-
-    //GET eventos por ID
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Evento>> GetEvento(int id)
-    {
-        var evento = await _context.Eventos
-                                   .Include(e => e.Creador)
-                                   .AsNoTracking()
-                                   .FirstOrDefaultAsync(e => e.EventoId == id);
-
-        if (evento == null)
+        [HttpGet]
+        public ActionResult<IEnumerable<Evento>> GetEventos()
         {
-            return NotFound();
+            var eventos = _servicioEvento.ObtenerTodosLosEventos();
+            return Ok(eventos);
         }
 
-        if (evento.Creador != null)
+        [HttpGet("{id}")]
+        public ActionResult<Evento> GetEvento(int id)
         {
-            evento.CreadorNombreUsuario = evento.Creador.NombreUsuario;
-        }
-
-        return Ok(evento);
-    }
-    
-    //POST crear evento
-    [HttpPost]
-    public async Task<ActionResult<Evento>> PostEvento(Evento evento)
-    {
-        _context.Eventos.Add(evento);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetEvento), new { id = evento.EventoId }, evento);
-    }
-
-    [HttpPost("{id}/inscribir")]
-    public async Task<IActionResult> InscribirUsuario(int id, [FromBody] int usuarioId)
-    {
-        var participante = new ParticipanteEvento
-        {
-            EventoId = id,
-            UsuarioId = usuarioId,
-            FechaInscripcion = DateTime.UtcNow
-        };
-        _context.ParticipanteEventos.Add(participante);
-        await _context.SaveChangesAsync();
-        return Ok("Inscripción exitosa.");
-    }
-
-    //PUT edicion de evento
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutEvento(int id, Evento evento)
-    {
-        if (id != evento.EventoId)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(evento).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!_context.Eventos.Any(e => e.EventoId == id))
+            var evento = _servicioEvento.ObtenerEventoPorId(id);
+            if (evento == null)
             {
                 return NotFound();
             }
-            else
+            return Ok(evento);
+        }
+
+        [HttpPost]
+        public ActionResult<Evento> PostEvento(Evento evento)
+        {
+            var eventoCreado = _servicioEvento.CrearEvento(evento);
+            return CreatedAtAction(nameof(GetEvento), new { id = eventoCreado.EventoId }, eventoCreado);
+        }
+
+        [HttpPost("{id}/inscribir")]
+        public IActionResult InscribirUsuario(int id, [FromBody] int usuarioId)
+        {
+            var mensaje = _servicioEvento.InscribirUsuarioAEvento(id, usuarioId);
+            return Ok(mensaje);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult PutEvento(int id, Evento evento)
+        {
+            var resultado = _servicioEvento.ActualizarEvento(id, evento);
+            if (!resultado)
             {
-                throw;
+                return BadRequest();
             }
+            return NoContent();
         }
 
-        return NoContent();
-    }
+        [HttpDelete("{eventoId}/inscripcion/{usuarioId}")]
+        public IActionResult CancelarInscripcion(int eventoId, int usuarioId)
+        {
+            var resultado = _servicioEvento.CancelarInscripcion(eventoId, usuarioId);
+            if (!resultado)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
 
-    //DELETE cancelar inscripcion al evento
-    [HttpDelete("{eventoId}/inscripcion/{usuarioId}")]
-    public async Task<IActionResult> CancelarInscripcion(int eventoId, int usuarioId)
-    {
-        var inscripcion = await _context.ParticipanteEventos
-            .FirstOrDefaultAsync(p => p.EventoId == eventoId && p.UsuarioId == usuarioId);
-        
-        if (inscripcion != null)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteEvento(int id)
         {
-            _context.ParticipanteEventos.Remove(inscripcion);
-            await _context.SaveChangesAsync();
+            var resultado = _servicioEvento.EliminarEvento(id);
+            if (!resultado)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
-        
-        return NoContent();
-    }
-    
-    //DELETE eliminar evento
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEvento(int id)
-    {
-        var evento = await _context.Eventos.FindAsync(id);
-        if (evento == null)
-        {
-            return NotFound();
-        }
-        _context.Eventos.Remove(evento);
-        await _context.SaveChangesAsync();
-        return NoContent();
     }
 }

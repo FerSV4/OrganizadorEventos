@@ -1,49 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using OrganizadorEventos.Server.Models;
-    using System.Threading.Tasks;
-    
+using OrganizadorEventos.Server.Models;
+using OrganizadorEventos.Server.Services;
+
+namespace OrganizadorEventos.Server.Controllers
+{
     [ApiController]
-    [Route("api/[controller]")] 
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly OrganizadorEventosContext _context;
-    
-        public AuthController(OrganizadorEventosContext context)
+        private readonly UsuarioService _servicioUsuario;
+
+        public AuthController(UsuarioService servicioUsuario)
         {
-            _context = context;
+            _servicioUsuario = servicioUsuario;
         }
-    
-        // POST: api/Auth/register
+
         [HttpPost("register")]
-        public async Task<ActionResult<Usuario>> Register(Usuario usuario)
+        public ActionResult<Usuario> Register(Usuario usuario)
         {
-
-            if (await _context.Usuarios.AnyAsync(u => u.Correo == usuario.Correo))
+            var usuarioRegistrado = _servicioUsuario.RegistrarUsuario(usuario);
+            if (usuarioRegistrado == null)
             {
-                return BadRequest("El correo electrónico ya está registrado.");
+                return BadRequest("Ya existe ese correo");
             }
-    
-            _context.Usuarios.Add(usuario);
-            await _context.SaveChangesAsync();
-    
-
-            return Ok(usuario);
+            return Ok(usuarioRegistrado);
         }
-    
-        // POST: api/Auth/login
+
         [HttpPost("login")]
-        public async Task<ActionResult<Usuario>> Login(LoginDto loginDto)
+        public ActionResult<Usuario> Login(LoginDto loginDto)
         {
-            var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Correo == loginDto.Correo && u.Password == loginDto.Password);
-    
+            var usuario = _servicioUsuario.Login(loginDto);
             if (usuario == null)
             {
-
-                return Unauthorized("Correo o contraseña incorrectos.");
+                return Unauthorized("Credenciales incorrectas");
             }
             return Ok(usuario);
         }
     }
-    
+}
