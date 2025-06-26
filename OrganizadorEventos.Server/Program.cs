@@ -13,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<EventoService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<FavoritosService>();
 
 builder.Services.AddControllers();
 var app = builder.Build();

@@ -1,0 +1,31 @@
+<h2>Mis Eventos Favoritos</h2>
+
+<div *ngIf="eventosFavoritos.length > 0; else noFavoritos">
+  <table>
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Fecha</th>
+        <th>Lugar</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let evento of eventosFavoritos">
+        <td>{{ evento.titulo }}</td>
+        <td>{{ evento.fecha | date: 'dd/MM/yyyy h:mm a' }}</td>
+        <td>{{ evento.lugar }}</td>
+        <td>
+          <button (click)="quitarDeFavoritos(evento.eventoId)">
+            Quitar de Favoritos
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #noFavoritos>
+</ng-template>
+
+<a routerLink="/eventos" style="display: inline-block; margin-top: 20px;">Volver a la Lista de Eventos</a>

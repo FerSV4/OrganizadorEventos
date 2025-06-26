@@ -1,6 +1,6 @@
 <h2>Lista de Eventos</h2>
 
-<table *ngIf="eventos$ | async as eventos">
+<table *ngIf="eventos$ | async as eventos; else cargando">
   <thead>
     <tr>
       <th>Título</th>
@@ -24,8 +24,9 @@
       <td>{{ evento.capacidad }}</td>
       <td>{{ evento.precio | currency }}</td>
       <td>{{ evento.creadorNombreUsuario }}</td>
-      <td>
+      <td style="display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
         <ng-container *ngIf="usuarioActual">
+          
           <button 
             (click)="inscribirse(evento.eventoId)" 
             [disabled]="esCreador(evento) || estaInscrito(evento.eventoId)">
@@ -33,8 +34,17 @@
             <span *ngIf="!esCreador(evento) && estaInscrito(evento.eventoId)">Ya inscrito</span>
             <span *ngIf="!esCreador(evento) && !estaInscrito(evento.eventoId)">Inscribirse</span>
           </button>
+          
+          <button *ngIf="!esCreador(evento)" (click)="esFavorito(evento.eventoId) ? quitarDeFavoritos(evento.eventoId) : marcarComoFavorito(evento.eventoId)">
+            {{ esFavorito(evento.eventoId) ? 'Quitar Favorito' : 'Marcar Favorito' }}
+          </button>
+
         </ng-container>
       </td>
     </tr>
   </tbody>
 </table>
+
+<ng-template #cargando>
+  <p>Cargando eventos...</p>
+</ng-template>
